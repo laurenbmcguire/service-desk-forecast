@@ -1,0 +1,52 @@
+# Risk register for the Service Desk Forecast portfolio project.
+# probability and impact are scored 1-5; the AI PM computes score = probability x impact.
+risks:
+  - id: R1
+    risk: "Concept drift: ticket mix and volumes shift after re-orgs, tooling migrations or self-service launches, so models fitted on history degrade"
+    probability: 4
+    impact: 4
+    owner: AI PM
+    mitigation: Re-run the rolling-origin backtest weekly in CI; add the drift check (B-09) that flags when live MAPE exceeds the backtest by 30%
+    status: open
+  - id: R2
+    risk: "Holiday effects: regional holidays, bridge days and the year-end freeze are misforecast"
+    probability: 3
+    impact: 3
+    owner: Lauren
+    mitigation: Holiday, day-after-holiday and year-end features; holiday-masked lags; region-specific calendar (B-13)
+    status: mitigating
+  - id: R3
+    risk: "Data quality of timestamps: time-zone mismatches, resolved-before-created rows and bulk-closure scripts in real ITSM exports"
+    probability: 3
+    impact: 4
+    owner: Lauren
+    mitigation: Validation checks in the pipeline today; export-side checks with the connector (B-11)
+    status: open
+  - id: R4
+    risk: "Incident surges: major outages create unforecastable spikes that inflate error and SLA breaches"
+    probability: 4
+    impact: 3
+    owner: AI PM
+    mitigation: Report incident days separately; prediction intervals from backtest residuals; use the ITSM major-incident flag once connected
+    status: monitoring
+  - id: R5
+    risk: "Erlang C assumptions: Poisson arrivals, no abandonment and one queue overstate staffing for asynchronous portal and email work"
+    probability: 3
+    impact: 3
+    owner: Lauren
+    mitigation: Document the assumption; split staffing by channel and evaluate Erlang A before using the numbers for rosters
+    status: open
+  - id: R6
+    risk: "Synthetic-to-real gap: generator parameters may not match a real service desk"
+    probability: 3
+    impact: 4
+    owner: Lauren
+    mitigation: Keep every claim scoped to synthetic data; re-fit and re-validate on real exports via the connector milestone (M6)
+    status: open
+  - id: R7
+    risk: "SLA label leakage: a feature that is only known after creation inflates AUC"
+    probability: 2
+    impact: 5
+    owner: AI PM
+    mitigation: Feature list restricted to creation-time fields and queue state; time-based train/test split; unit test guards the feature list
+    status: mitigating

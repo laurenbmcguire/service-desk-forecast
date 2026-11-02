@@ -1,0 +1,198 @@
+{
+  "project": "service-desk-forecast",
+  "data": {
+    "synthetic": true,
+    "start": "2025-01-01",
+    "end": "2026-06-30",
+    "days": 546,
+    "tickets": 56423,
+    "mean_daily_weekday": 134.5,
+    "mean_daily_weekend": 25.5,
+    "category_mix": {
+      "access": 0.278,
+      "email": 0.143,
+      "hardware": 0.136,
+      "network": 0.122,
+      "security": 0.103,
+      "software": 0.217
+    },
+    "priority_mix": {
+      "P1": 0.023,
+      "P2": 0.107,
+      "P3": 0.508,
+      "P4": 0.362
+    },
+    "sla_breach_rate": 0.1672,
+    "breach_rate_by_created_weekday": {
+      "Mon": 0.043,
+      "Tue": 0.099,
+      "Wed": 0.17,
+      "Thu": 0.264,
+      "Fri": 0.321,
+      "Sat": 0.219,
+      "Sun": 0.051
+    },
+    "breach_rate_by_group": {
+      "Service Desk L1": 0.031,
+      "Identity & Access": 0.094,
+      "Messaging": 0.168,
+      "Network Ops": 0.202,
+      "Security Ops": 0.255,
+      "Application Support": 0.266,
+      "End-User Computing": 0.349
+    },
+    "reopen_rate": 0.0512,
+    "median_resolution_hours": 20.99,
+    "quality_checks": {
+      "rows": 56423,
+      "duplicate_ids": 0,
+      "missing_created": 0,
+      "open_at_extract": 158,
+      "resolved_before_created": 0,
+      "unknown_priority": 0,
+      "unknown_category": 0
+    },
+    "incidents": [
+      {
+        "name": "Email outage: inbound mail flow stopped",
+        "date": "2025-03-11",
+        "category": "email",
+        "tickets_that_day": 319,
+        "vs_weekday_mean": 2.08
+      },
+      {
+        "name": "VPN gateway failure",
+        "date": "2025-06-17",
+        "category": "network",
+        "tickets_that_day": 247,
+        "vs_weekday_mean": 1.61
+      },
+      {
+        "name": "SSO / MFA provider outage",
+        "date": "2025-10-07",
+        "category": "access",
+        "tickets_that_day": 305,
+        "vs_weekday_mean": 1.99
+      },
+      {
+        "name": "Phishing campaign wave",
+        "date": "2026-02-03",
+        "category": "security",
+        "tickets_that_day": 274,
+        "vs_weekday_mean": 1.79
+      },
+      {
+        "name": "Office suite update regression",
+        "date": "2026-05-12",
+        "category": "software",
+        "tickets_that_day": 245,
+        "vs_weekday_mean": 1.6
+      }
+    ]
+  },
+  "forecast": {
+    "model": "Ridge on log1p(volume): weekday, month, holiday, bridge-day, year-end, trend, 4-11 week same-weekday lags",
+    "baseline": "Seasonal naive (same weekday last week)",
+    "backtest": {
+      "folds": 6,
+      "horizon_days": 28,
+      "model_mae": 13.21,
+      "model_mape": 15.005,
+      "baseline_mae": 17.214,
+      "baseline_mape": 32.141,
+      "mae_improvement_pct": 23.264,
+      "mape_improvement_pct": 53.316
+    },
+    "backtest_by_day_type": {
+      "special_days": {
+        "days": 8,
+        "model_mape": 32.51,
+        "baseline_mape": 281.43,
+        "model_mae": 18.51,
+        "baseline_mae": 85.0
+      },
+      "normal_days": {
+        "days": 160,
+        "model_mape": 14.13,
+        "baseline_mape": 19.68,
+        "model_mae": 12.94,
+        "baseline_mae": 13.82
+      }
+    },
+    "interval": {
+      "level": 0.8,
+      "method": "Quantiles of backtest log residuals",
+      "log_residual_q_lo": -0.2303,
+      "log_residual_q_hi": 0.2047,
+      "holdout_coverage": 0.893
+    },
+    "next_28_days": {
+      "start": "2026-07-01",
+      "end": "2026-07-28",
+      "total": 2688.0,
+      "total_lo": 2130.0,
+      "total_hi": 3306.0,
+      "peak_date": "2026-07-06",
+      "peak_forecast": 154.5,
+      "holidays": {
+        "2026-07-03": "Independence Day"
+      }
+    }
+  },
+  "sla": {
+    "targets_hours": {
+      "P1": 4.0,
+      "P2": 8.0,
+      "P3": 72.0,
+      "P4": 120.0
+    },
+    "model": "HistGradientBoostingClassifier on creation-time features",
+    "train_start": "2025-01-15",
+    "test_start": "2026-03-01",
+    "test_end": "2026-06-30",
+    "n_train": 42069,
+    "n_test": 12837,
+    "roc_auc": 0.8384,
+    "roc_auc_without_queue_features": 0.8317,
+    "roc_auc_priority_only": 0.5097,
+    "test_breach_rate": 0.1548,
+    "precision_at_top10pct": 0.5358,
+    "lift_at_top10pct": 3.46,
+    "top_features": [
+      {
+        "feature": "dow",
+        "importance": 0.167
+      },
+      {
+        "feature": "assignee_group",
+        "importance": 0.0915
+      },
+      {
+        "feature": "queue_open_group",
+        "importance": 0.0324
+      },
+      {
+        "feature": "priority",
+        "importance": 0.0233
+      },
+      {
+        "feature": "arrivals_prev_24h_group",
+        "importance": 0.0134
+      }
+    ]
+  },
+  "staffing": {
+    "method": "Erlang C with occupancy cap",
+    "service_level_target": 0.8,
+    "answer_time_seconds": 20,
+    "max_occupancy": 0.85,
+    "aht_minutes": 15.92,
+    "peak_agents": 8,
+    "peak_slot": "Mon 11:00",
+    "peak_arrivals_per_hour": 17.48,
+    "weekly_agent_hours": 469,
+    "shrinkage": 0.3,
+    "scheduled_fte": 16.8,
+    "weekday_business_hours_mean_agents": 5.66
+  }
+}

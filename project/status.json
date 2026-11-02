@@ -1,0 +1,224 @@
+{
+  "project": "Service Desk Forecast",
+  "as_of": "2026-11-02",
+  "health": {
+    "rag": "AMBER",
+    "reason": "1 open P0 item(s) (B-10); 1 risk(s) scored >= 15 (R1=16)",
+    "overdue_milestones": 0,
+    "open_p0": 1,
+    "high_risks": 1
+  },
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "Synthetic ticket generator",
+      "due": "2026-09-18",
+      "status": "done",
+      "items_done": 2,
+      "items_total": 2,
+      "pct_done": 100,
+      "overdue": false,
+      "days_overdue": 0,
+      "done_criteria": "18 months of seeded hourly arrivals with weekday/hour seasonality, holidays and incident surges; resolution times driven by category, priority and queue load"
+    },
+    {
+      "id": "M2",
+      "name": "Forecast backtest",
+      "due": "2026-10-02",
+      "status": "done",
+      "items_done": 2,
+      "items_total": 2,
+      "pct_done": 100,
+      "overdue": false,
+      "days_overdue": 0,
+      "done_criteria": "Rolling-origin backtest (6 x 28 days) with MAE/MAPE for seasonal naive vs calendar-feature ridge; 28-day forecast with residual-quantile intervals"
+    },
+    {
+      "id": "M3",
+      "name": "SLA breach model",
+      "due": "2026-10-16",
+      "status": "done",
+      "items_done": 1,
+      "items_total": 1,
+      "pct_done": 100,
+      "overdue": false,
+      "days_overdue": 0,
+      "done_criteria": "Gradient boosting on creation-time features plus queue length; time-based split; ROC AUC, precision@top10% and permutation importance reported"
+    },
+    {
+      "id": "M4",
+      "name": "Staffing model",
+      "due": "2026-10-30",
+      "status": "done",
+      "items_done": 2,
+      "items_total": 2,
+      "pct_done": 100,
+      "overdue": false,
+      "days_overdue": 0,
+      "done_criteria": "Erlang C agents per hour for 80/20 with occupancy cap; typical-week heatmap from the forecast"
+    },
+    {
+      "id": "M5",
+      "name": "Interval calibration and drift monitoring",
+      "due": "2026-11-20",
+      "status": "in_progress",
+      "items_done": 0,
+      "items_total": 3,
+      "pct_done": 0,
+      "overdue": false,
+      "days_overdue": 0,
+      "done_criteria": "Horizon-aware interval calibration and an automated drift check that flags when live MAPE exceeds the backtest by 30%"
+    },
+    {
+      "id": "M6",
+      "name": "ServiceNow / Jira export connector",
+      "due": "2026-12-18",
+      "status": "planned",
+      "items_done": 0,
+      "items_total": 3,
+      "pct_done": 0,
+      "overdue": false,
+      "days_overdue": 0,
+      "done_criteria": "Read-only export adapter that maps ServiceNow incident and Jira Service Management fields onto the deskcast ticket schema, with timestamp validation"
+    },
+    {
+      "id": "M7",
+      "name": "Power BI dashboard",
+      "due": "2027-01-29",
+      "status": "planned",
+      "items_done": 0,
+      "items_total": 2,
+      "pct_done": 0,
+      "overdue": false,
+      "days_overdue": 0,
+      "done_criteria": "Star-schema CSV export and a Power BI report with forecast, SLA risk and staffing pages"
+    }
+  ],
+  "next_actions": [
+    {
+      "id": "B-10",
+      "title": "Define ServiceNow incident-table field mapping onto the deskcast schema",
+      "priority": "P0",
+      "owner": "Lauren",
+      "milestone": "M6",
+      "depends_on": [],
+      "deps_satisfied": 0
+    },
+    {
+      "id": "B-09",
+      "title": "Drift check that compares rolling MAPE with the backtest and flags a 30% gap",
+      "priority": "P1",
+      "owner": "AI PM",
+      "milestone": "M5",
+      "depends_on": [
+        "B-03"
+      ],
+      "deps_satisfied": 1
+    },
+    {
+      "id": "B-11",
+      "title": "Timestamp data-quality checks for exports (time zones, resolved before created, bulk closures)",
+      "priority": "P1",
+      "owner": "AI PM",
+      "milestone": "M6",
+      "depends_on": [
+        "B-01"
+      ],
+      "deps_satisfied": 1
+    }
+  ],
+  "risks": [
+    {
+      "id": "R1",
+      "risk": "Concept drift: ticket mix and volumes shift after re-orgs, tooling migrations or self-service launches, so models fitted on history degrade",
+      "probability": 4,
+      "impact": 4,
+      "owner": "AI PM",
+      "mitigation": "Re-run the rolling-origin backtest weekly in CI; add the drift check (B-09) that flags when live MAPE exceeds the backtest by 30%",
+      "status": "open",
+      "score": 16,
+      "heat": "High"
+    },
+    {
+      "id": "R3",
+      "risk": "Data quality of timestamps: time-zone mismatches, resolved-before-created rows and bulk-closure scripts in real ITSM exports",
+      "probability": 3,
+      "impact": 4,
+      "owner": "Lauren",
+      "mitigation": "Validation checks in the pipeline today; export-side checks with the connector (B-11)",
+      "status": "open",
+      "score": 12,
+      "heat": "Medium"
+    },
+    {
+      "id": "R4",
+      "risk": "Incident surges: major outages create unforecastable spikes that inflate error and SLA breaches",
+      "probability": 4,
+      "impact": 3,
+      "owner": "AI PM",
+      "mitigation": "Report incident days separately; prediction intervals from backtest residuals; use the ITSM major-incident flag once connected",
+      "status": "monitoring",
+      "score": 12,
+      "heat": "Medium"
+    },
+    {
+      "id": "R6",
+      "risk": "Synthetic-to-real gap: generator parameters may not match a real service desk",
+      "probability": 3,
+      "impact": 4,
+      "owner": "Lauren",
+      "mitigation": "Keep every claim scoped to synthetic data; re-fit and re-validate on real exports via the connector milestone (M6)",
+      "status": "open",
+      "score": 12,
+      "heat": "Medium"
+    },
+    {
+      "id": "R7",
+      "risk": "SLA label leakage: a feature that is only known after creation inflates AUC",
+      "probability": 2,
+      "impact": 5,
+      "owner": "AI PM",
+      "mitigation": "Feature list restricted to creation-time fields and queue state; time-based train/test split; unit test guards the feature list",
+      "status": "mitigating",
+      "score": 10,
+      "heat": "Medium"
+    },
+    {
+      "id": "R2",
+      "risk": "Holiday effects: regional holidays, bridge days and the year-end freeze are misforecast",
+      "probability": 3,
+      "impact": 3,
+      "owner": "Lauren",
+      "mitigation": "Holiday, day-after-holiday and year-end features; holiday-masked lags; region-specific calendar (B-13)",
+      "status": "mitigating",
+      "score": 9,
+      "heat": "Medium"
+    },
+    {
+      "id": "R5",
+      "risk": "Erlang C assumptions: Poisson arrivals, no abandonment and one queue overstate staffing for asynchronous portal and email work",
+      "probability": 3,
+      "impact": 3,
+      "owner": "Lauren",
+      "mitigation": "Document the assumption; split staffing by channel and evaluate Erlang A before using the numbers for rosters",
+      "status": "open",
+      "score": 9,
+      "heat": "Medium"
+    }
+  ],
+  "backlog_counts": {
+    "todo": 7,
+    "doing": 1,
+    "done": 7
+  },
+  "data_says": [
+    "Forecast: the calendar-feature ridge model beats seasonal naive by 53% on MAPE (15.0% vs 32.1%) and 23% on MAE across 6 rolling 28-day folds.",
+    "Demand: 2,688 tickets expected 2026-07-01 to 2026-07-28 (80% band 2,130 to 3,306); busiest day 2026-07-06 at about 154.",
+    "SLA risk: ROC AUC 0.838; the top 10% riskiest tickets breach 54% of the time vs a 15% base rate (3.5x). Top driver: day of week.",
+    "Staffing: peak of 8 agents (Mon 11:00) and 469 agent-hours in a typical week for 80%/20s, about 16.8 FTE after 30% shrinkage.",
+    "Data: 56,423 synthetic tickets over 546 days, 16.7% SLA breach rate, 5 injected incident surges, 0 timestamp-order violations."
+  ],
+  "change_log": "2026-11-02: health AMBER; 4/7 milestones done; next focus B-10, B-09, B-11. Forecast MAPE 15.0% vs baseline 32.1%. SLA AUC 0.838.",
+  "executive_summary": "Overall health is AMBER: 1 open P0 item(s) (B-10); 1 risk(s) scored >= 15 (R1=16). 4 of 7 milestones are done; M5 (Interval calibration and drift monitoring) is in progress with 0% of items closed; 2 are planned, the next due 2026-12-18. Forecast: the calendar-feature ridge model beats seasonal naive by 53% on MAPE (15.0% vs 32.1%) and 23% on MAE across 6 rolling 28-day folds. SLA risk: ROC AUC 0.838; the top 10% riskiest tickets breach 54% of the time vs a 15% base rate (3.5x). Top driver: day of week. Next actions: B-10, B-09 and B-11. Top risk: R1 (Concept drift), score 16.",
+  "executive_summary_source": "template"
+}

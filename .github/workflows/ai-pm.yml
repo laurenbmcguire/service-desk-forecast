@@ -1,0 +1,41 @@
+name: AI PM weekly status
+
+on:
+  schedule:
+    - cron: '17 13 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+      - name: Run pipeline
+        run: python -m deskcast run
+      - name: Run AI PM
+        run: python -m deskcast pm
+      - name: Publish status to job summary
+        run: cat project/STATUS.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Commit status update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add project/STATUS.md project/status.json docs/img reports
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "AI PM: weekly status update"
+            git push
+          fi

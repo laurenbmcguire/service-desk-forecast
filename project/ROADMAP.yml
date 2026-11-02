@@ -1,0 +1,147 @@
+# Roadmap for the Service Desk Forecast portfolio project.
+# Read by the AI PM (python -m deskcast pm). Status: done | in_progress | planned.
+project: Service Desk Forecast
+
+milestones:
+  - id: M1
+    name: Synthetic ticket generator
+    due: 2026-09-18
+    status: done
+    done_criteria: 18 months of seeded hourly arrivals with weekday/hour seasonality, holidays and incident surges; resolution times driven by category, priority and queue load
+  - id: M2
+    name: Forecast backtest
+    due: 2026-10-02
+    status: done
+    done_criteria: Rolling-origin backtest (6 x 28 days) with MAE/MAPE for seasonal naive vs calendar-feature ridge; 28-day forecast with residual-quantile intervals
+  - id: M3
+    name: SLA breach model
+    due: 2026-10-16
+    status: done
+    done_criteria: Gradient boosting on creation-time features plus queue length; time-based split; ROC AUC, precision@top10% and permutation importance reported
+  - id: M4
+    name: Staffing model
+    due: 2026-10-30
+    status: done
+    done_criteria: Erlang C agents per hour for 80/20 with occupancy cap; typical-week heatmap from the forecast
+  - id: M5
+    name: Interval calibration and drift monitoring
+    due: 2026-11-20
+    status: in_progress
+    done_criteria: Horizon-aware interval calibration and an automated drift check that flags when live MAPE exceeds the backtest by 30%
+  - id: M6
+    name: ServiceNow / Jira export connector
+    due: 2026-12-18
+    status: planned
+    done_criteria: Read-only export adapter that maps ServiceNow incident and Jira Service Management fields onto the deskcast ticket schema, with timestamp validation
+  - id: M7
+    name: Power BI dashboard
+    due: 2027-01-29
+    status: planned
+    done_criteria: Star-schema CSV export and a Power BI report with forecast, SLA risk and staffing pages
+
+backlog:
+  - id: B-01
+    title: Seeded hourly arrival generator with holidays and incident surges
+    priority: P0
+    status: done
+    owner: Lauren
+    milestone: M1
+    depends_on: []
+  - id: B-02
+    title: Resolution-time model driven by priority, category, queue load and business hours
+    priority: P0
+    status: done
+    owner: Lauren
+    milestone: M1
+    depends_on: [B-01]
+  - id: B-03
+    title: Rolling-origin backtest harness with seasonal-naive baseline
+    priority: P0
+    status: done
+    owner: Lauren
+    milestone: M2
+    depends_on: [B-01]
+  - id: B-04
+    title: Calendar-feature ridge model with holiday-robust lags
+    priority: P1
+    status: done
+    owner: Lauren
+    milestone: M2
+    depends_on: [B-03]
+  - id: B-05
+    title: Gradient-boosting SLA classifier with queue length at creation
+    priority: P0
+    status: done
+    owner: Lauren
+    milestone: M3
+    depends_on: [B-02]
+  - id: B-06
+    title: Erlang C solver with occupancy cap and typical-week heatmap
+    priority: P1
+    status: done
+    owner: Lauren
+    milestone: M4
+    depends_on: [B-04]
+  - id: B-07
+    title: Weekly AI PM status report in CI
+    priority: P1
+    status: done
+    owner: AI PM
+    milestone: M4
+    depends_on: []
+  - id: B-08
+    title: Horizon-aware interval calibration (week 1 vs week 4 residuals)
+    priority: P1
+    status: doing
+    owner: Lauren
+    milestone: M5
+    depends_on: [B-04]
+  - id: B-09
+    title: Drift check that compares rolling MAPE with the backtest and flags a 30% gap
+    priority: P1
+    status: todo
+    owner: AI PM
+    milestone: M5
+    depends_on: [B-03]
+  - id: B-10
+    title: Define ServiceNow incident-table field mapping onto the deskcast schema
+    priority: P0
+    status: todo
+    owner: Lauren
+    milestone: M6
+    depends_on: []
+  - id: B-11
+    title: Timestamp data-quality checks for exports (time zones, resolved before created, bulk closures)
+    priority: P1
+    status: todo
+    owner: AI PM
+    milestone: M6
+    depends_on: [B-01]
+  - id: B-12
+    title: Jira Service Management export adapter
+    priority: P2
+    status: todo
+    owner: Lauren
+    milestone: M6
+    depends_on: [B-10]
+  - id: B-13
+    title: Region-specific holiday calendar in config
+    priority: P2
+    status: todo
+    owner: Lauren
+    milestone: M5
+    depends_on: [B-04]
+  - id: B-14
+    title: Star-schema CSV export for Power BI
+    priority: P2
+    status: todo
+    owner: Lauren
+    milestone: M7
+    depends_on: [B-10]
+  - id: B-15
+    title: Power BI report pages for forecast, SLA risk and staffing
+    priority: P3
+    status: todo
+    owner: Lauren
+    milestone: M7
+    depends_on: [B-14]
