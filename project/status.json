@@ -1,6 +1,6 @@
 {
   "project": "Service Desk Forecast",
-  "as_of": "2026-11-02",
+  "as_of": "2026-11-03",
   "health": {
     "rag": "AMBER",
     "reason": "1 open P0 item(s) (B-10); 1 risk(s) scored >= 15 (R1=16)",
@@ -218,7 +218,7 @@
     "Staffing: peak of 8 agents (Mon 11:00) and 469 agent-hours in a typical week for 80%/20s, about 16.8 FTE after 30% shrinkage.",
     "Data: 56,423 synthetic tickets over 546 days, 16.7% SLA breach rate, 5 injected incident surges, 0 timestamp-order violations."
   ],
-  "change_log": "2026-11-02: health AMBER; 4/7 milestones done; next focus B-10, B-09, B-11. Forecast MAPE 15.0% vs baseline 32.1%. SLA AUC 0.838.",
+  "change_log": "2026-11-03: health AMBER; 4/7 milestones done; next focus B-10, B-09, B-11. Forecast MAPE 15.0% vs baseline 32.1%. SLA AUC 0.838.",
   "executive_summary": "Overall health is AMBER: 1 open P0 item(s) (B-10); 1 risk(s) scored >= 15 (R1=16). 4 of 7 milestones are done; M5 (Interval calibration and drift monitoring) is in progress with 0% of items closed; 2 are planned, the next due 2026-12-18. Forecast: the calendar-feature ridge model beats seasonal naive by 53% on MAPE (15.0% vs 32.1%) and 23% on MAE across 6 rolling 28-day folds. SLA risk: ROC AUC 0.838; the top 10% riskiest tickets breach 54% of the time vs a 15% base rate (3.5x). Top driver: day of week. Next actions: B-10, B-09 and B-11. Top risk: R1 (Concept drift), score 16.",
   "executive_summary_source": "template"
 }
